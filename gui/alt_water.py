@@ -7,7 +7,7 @@ import geopandas as gpd
 import pandas as pd
 import matplotlib.pyplot as plt
 from shapely.geometry import box, shape
-
+from matplotlib.patches import Patch
 import folium
 from streamlit_folium import st_folium
 import ee
@@ -52,8 +52,8 @@ def get_class_color(reservoir_class):
 # Page setup
 # -------------------------------------------------
 st.set_page_config(layout="centered")
-st.title("Alt-WaTeR")
-st.caption("Water level Time series generation using satellite Altimetry")
+st.title("Alt-WaTER")
+st.caption("Water level Time series Estimation using multi-mission satellite Altimetry")
 st.markdown("---")
 
 # -------------------------------------------------
@@ -223,8 +223,9 @@ if st.session_state.analysis_done:
     # Map plot
     # -------------------------------------------------
     fig, ax = plt.subplots(figsize=(6.5, 6.5))
-    perm_gdf.plot(ax=ax, facecolor="blue", alpha=0.9)
     max_gdf.plot(ax=ax, facecolor="lightblue", alpha=0.9)
+    perm_gdf.plot(ax=ax, facecolor="blue", alpha=0.5)
+    
 
     gpd.GeoDataFrame(
         ts_df,
@@ -235,7 +236,14 @@ if st.session_state.analysis_done:
         crs="EPSG:4326",
     ).plot(ax=ax, color=class_color, markersize=4)
 
-    ax.set_title(f"Reservoir class {reservoir_class}")
+    legend_elements = [
+        Patch(facecolor="lightblue", label="Maximum water", alpha=0.9),
+        Patch(facecolor="blue", alpha=0.5, label="Permanent water"),
+        ]
+
+    ax.legend(handles=legend_elements, loc="upper left",frameon=False,fontsize=9)
+
+    ax.set_title(f"Track class {reservoir_class}")
     ax.grid(alpha=0.3)
     st.pyplot(fig)
 
