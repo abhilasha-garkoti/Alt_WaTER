@@ -14,6 +14,7 @@ Alt-WaTER is a *Python* software for generating reservoir water level time serie
 
 * **Abhilasha Garkoti**, Indian Institute of Technology Kanpur, India
 * **Balaji Devaraju**, Indian Institute of Technology Kanpur, India
+* **Shivam Tripathi**, Indian Institute of Technology Kanpur, India
 
 ---
 
