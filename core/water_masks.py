@@ -32,6 +32,7 @@ def merge_and_fill(gdf):
 # --------------------------------------------------
 def water_masks(
     aoi_gdf: gpd.GeoDataFrame,
+    project_id,
     occurrence_threshold: int = 90,
     scale: int = 30,
     plot: bool = True,
@@ -59,14 +60,7 @@ def water_masks(
         Single merged maximum water extent polygon (no holes)
     """
 
-    # --------------------------------------------------
-    # Earth Engine init (safe)
-    # --------------------------------------------------
-    try:
-        ee.Initialize()
-    except Exception:
-        ee.Authenticate()
-        ee.Initialize()
+    ee.Initialize(project=project_id)
 
     # --------------------------------------------------
     # AOI validation

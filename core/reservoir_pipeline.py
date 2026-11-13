@@ -1,4 +1,6 @@
+
 import os
+import csv
 import ee
 import geopandas as gpd
 
@@ -11,7 +13,9 @@ def run_reservoir_analysis(
     aoi_gdf: gpd.GeoDataFrame,
     altimetry_folder: str,
     output_csv: str,
+    project_id,
     occurrence_threshold: int = 90,
+    
 ):
     """
     End-to-end reservoir analysis pipeline.
@@ -32,10 +36,10 @@ def run_reservoir_analysis(
     # Earth Engine initialization
     # --------------------------------------------------
     try:
-        ee.Initialize()
+        ee.Initialize(project=project_id)
     except Exception:
         ee.Authenticate()
-        ee.Initialize()
+        ee.Initialize(project=project_id)
 
     # --------------------------------------------------
     # Sanity checks
@@ -62,6 +66,7 @@ def run_reservoir_analysis(
         aoi_gdf=aoi_gdf,
         occurrence_threshold=occurrence_threshold,
         plot=False,
+        project_id=project_id,
     )
 
     if perm_gdf.empty or max_gdf.empty:
@@ -87,7 +92,7 @@ def run_reservoir_analysis(
         print(track_metrics)
 
     if terrain_metrics is not None and not terrain_metrics.empty:
-        print("🗻 Terrain complexity metrics:")
+        print("🗻 Terrain metadata:")
         print(terrain_metrics)
 
     # --------------------------------------------------
@@ -99,6 +104,50 @@ def run_reservoir_analysis(
         reservoir_class=reservoir_class,
         output_dir=output_dir,
     )
+
+    # --------------------------------------------------
+    # Retain terrain values in the final CSV
+    #
+    # The time-series function already writes:
+    #   s1_date
+    #   s1_gap_days
+    #
+    # Add:
+    #   elev_p95_p05_m
+    #   tri_p95_m
+    #
+    # No terrain subclass or threshold is applied.
+    # --------------------------------------------------
+    if (
+        terrain_metrics is not None
+        and not terrain_metrics.empty
+        and os.path.isfile(median_csv)
+    ):
+
+        with open(median_csv, "r", newline="") as f:
+            reader = csv.DictReader(f)
+            fieldnames = list(reader.fieldnames)
+            rows = list(reader)
+
+        if rows:
+            elev_var = terrain_metrics.iloc[0]["elev_p95_p05_m"]
+            tri_p95 = terrain_metrics.iloc[0]["tri_p95_m"]
+
+            for col in ["elev_p95_p05_m", "tri_p95_m"]:
+                if col not in fieldnames:
+                    fieldnames.append(col)
+
+            for row in rows:
+                row["elev_p95_p05_m"] = str(elev_var)
+                row["tri_p95_m"] = str(tri_p95)
+
+            with open(median_csv, "w", newline="") as f:
+                writer = csv.DictWriter(
+                    f,
+                    fieldnames=fieldnames
+                )
+                writer.writeheader()
+                writer.writerows(rows)
 
     # --------------------------------------------------
     # Return results
