@@ -48,7 +48,7 @@ Alt-WaTER is intended to be used through a graphical user interface implemented 
 | Mission                   | Radar mode   |
 | ------------------------- | ------------ |
 | Sentinel-3A / Sentinel-3B | SAR          |
-| Sentinel-6A               | SAR HR / LRM |
+| Sentinel-6A               | SAR-HR / LRM |
 | Jason-3                   | LRM          |
 | SWOT (NALT)               | SAR          |
 
@@ -56,7 +56,7 @@ Alt-WaTER is intended to be used through a graphical user interface implemented 
 
 ## Reservoir classification
 
-Each reservoir is assigned to one of five classes based on altimetry track behaviour and surrounding terrain characteristics:
+Each reservoir is assigned to one of five classes based on altimetry track behavior and surrounding terrain characteristics:
 
 | Class | Description                                                   |
 | ----: | ------------------------------------------------------------- |
@@ -64,7 +64,7 @@ Each reservoir is assigned to one of five classes based on altimetry track behav
 |     2 | Low-resolution altimetry fully over permanent water           |
 |     3 | High-resolution altimetry affected by shoreline contamination |
 |     4 | Low-resolution altimetry affected by shoreline contamination  |
-|     5 | Reservoirs in complex or mountainous terrain                  |
+
 
 The assigned class controls buffering distance, filtering strategy, and the use of Sentinel-1 data.
 
@@ -160,6 +160,12 @@ The output CSV file contains one record per satellite pass with the following fi
 * longitude
 * elevation
 * uncertainty
+* s1_gap_days
+* s1_date
+* elev_p95_p05_m
+* tri_p95_m
+
+
 
 ### Figures
 
