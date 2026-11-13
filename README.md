@@ -160,7 +160,7 @@ The output CSV file contains one record per satellite pass with the following fi
 * latitude
 * longitude
 * elevation
-* uncertainty
+* water_level_variability
 * s1_gap_days
 * s1_date
 * elev_p95_p05_m
